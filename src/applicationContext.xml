@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+     <!--配置通知类对象，在切面中引入-->
+    <bean id="beforeAdvice" class="com.xoste.leon.advice.BeforeAdvice"/>
+    <bean id="afterAdvice" class="com.xoste.leon.advice.AfterAdvice"/>
+    <!-- 配置切面-->
+    <aop:config>
+        <!-- 配置切点-->
+        <aop:pointcut expression="execution(* com.xoste.leon.test.Demo.*(..))" id="myPoint"/>
+       <!-- 通知-->
+        <aop:advisor advice-ref="beforeAdvice" pointcut-ref="myPoint"/>
+        <aop:advisor advice-ref="afterAdvice" pointcut-ref="myPoint"/>
+    </aop:config>
+    <bean id="myThrowsAdvice" class="com.xoste.leon.advice.MyThrowsAdvice"/>
+    <aop:config>
+        <aop:aspect ref="myThrowsAdvice">
+            <aop:pointcut expression="execution(* com.xoste.leon.test.Demo.demo1())" id="myPoint"/>
+            <aop:after-throwing method="myException" pointcut-ref="myPoint" throwing="e"/>
+        </aop:aspect>
+    </aop:config>
+    <!-- 配置Demo类，进行测试-->
+    <bean id="demo" class="com.xoste.leon.test.Demo"/>
+</beans>
